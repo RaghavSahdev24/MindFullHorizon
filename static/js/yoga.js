@@ -1,163 +1,163 @@
-let timerInterval;
-let sessionDuration = 0; // in seconds
-let timeElapsed = 0;
-let isPaused = false;
+(function () {
+    let timerInterval;
+    let sessionDuration = 0; // in seconds
+    let timeElapsed = 0;
+    let isPaused = false;
 
-let timerDisplay;
-let progressBar;
-let sessionStatus;
+    let timerDisplay;
+    let progressBar;
+    let sessionStatus;
 
-let startBtn;
-let pauseBtn;
-let stopBtn;
+    let startBtn;
+    let pauseBtn;
+    let stopBtn;
 
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeElapsed / 60);
-    const seconds = timeElapsed % 60;
-    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeElapsed / 60);
+        const seconds = timeElapsed % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-    if (sessionDuration > 0) {
-        const progress = (timeElapsed / sessionDuration) * 100;
-        progressBar.style.width = `${progress}%`;
-    }
-}
-
-function startTimer() {
-    if (sessionDuration === 0) {
-        alert('Please set a session duration first (e.g., 5 min, 10 min, or a guided session).');
-        return;
-    }
-
-    if (timerInterval) clearInterval(timerInterval);
-
-    isPaused = false;
-    sessionStatus.textContent = 'Session in progress...';
-    startBtn.classList.add('hidden');
-    pauseBtn.classList.remove('hidden');
-    stopBtn.classList.remove('hidden');
-
-    timerInterval = setInterval(() => {
-        if (!isPaused) {
-            timeElapsed++;
-            updateTimerDisplay();
-
-            if (timeElapsed >= sessionDuration) {
-                stopTimer();
-                sessionStatus.textContent = 'Session completed!';
-                playBeep();
-                // Optionally log session here or trigger a modal
-            }
+        if (sessionDuration > 0) {
+            const progress = (timeElapsed / sessionDuration) * 100;
+            progressBar.style.width = `${progress}%`;
         }
-    }, 1000);
-}
+    }
 
-function playBeep() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
+    function startTimer() {
+        if (sessionDuration === 0) {
+            alert('Please set a session duration first (e.g., 5 min, 10 min, or a guided session).');
+            return;
+        }
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+        if (timerInterval) clearInterval(timerInterval);
 
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.5); // Play for 0.5 seconds
-}
-
-function pauseTimer() {
-    isPaused = !isPaused;
-    if (isPaused) {
-        sessionStatus.textContent = 'Session paused.';
-        pauseBtn.innerHTML = '<i class="fas fa-play mr-2"></i>Resume';
-    } else {
+        isPaused = false;
         sessionStatus.textContent = 'Session in progress...';
-        pauseBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>Pause';
+        startBtn.classList.add('hidden');
+        pauseBtn.classList.remove('hidden');
+        stopBtn.classList.remove('hidden');
+
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                timeElapsed++;
+                updateTimerDisplay();
+
+                if (timeElapsed >= sessionDuration) {
+                    stopTimer();
+                    sessionStatus.textContent = 'Session completed!';
+                    playBeep();
+                }
+            }
+        }, 1000);
     }
-}
 
-function stopTimer() {
-    clearInterval(timerInterval);
-    timeElapsed = 0;
-    isPaused = false;
-    sessionDuration = 0; // Reset duration
-    updateTimerDisplay();
-    sessionStatus.textContent = 'Ready to begin your practice';
-    startBtn.classList.remove('hidden');
-    pauseBtn.classList.add('hidden');
-    stopBtn.classList.add('hidden');
-    progressBar.style.width = '0%';
-}
+    function playBeep() {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
 
-function setQuickSession(durationMinutes) {
-    sessionDuration = durationMinutes * 60;
-    timeElapsed = 0;
-    updateTimerDisplay();
-    sessionStatus.textContent = `Quick session set for ${durationMinutes} minutes.`;
-    startBtn.classList.remove('hidden');
-    pauseBtn.classList.add('hidden');
-    stopBtn.classList.add('hidden');
-    progressBar.style.width = '0%';
-}
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
 
-function startGuidedSession(type, name, durationMinutes) {
-    setQuickSession(durationMinutes); // Use quick session setter
-    sessionStatus.textContent = `Starting guided ${type} session: ${name} (${durationMinutes} minutes)`;
-    startTimer(); // Automatically start the timer
-    // In a real app, you'd also load guided audio/video here
-    alert(`Starting guided ${type} session: ${name} for ${durationMinutes} minutes.`);
-}
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
 
-function toggleYogaVideos() {
-    const section = document.getElementById('yoga-videos-section');
-    const btn = document.getElementById('show-videos-btn');
-    if (!section || !btn) return;
-    if (section.classList.contains('hidden')) {
-        section.classList.remove('hidden');
-        btn.innerHTML = '<i class="fas fa-video mr-2"></i>Yoga Video Library';
-        btn.setAttribute('aria-expanded', 'true');
-    } else {
-        section.classList.add('hidden');
-        btn.innerHTML = '<i class="fas fa-video mr-2"></i>Yoga Video Library';
-        btn.setAttribute('aria-expanded', 'false');
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.5); // Play for 0.5 seconds
     }
-}
 
-document.addEventListener('DOMContentLoaded', function () {
-    timerDisplay = document.getElementById('timer-display');
-    progressBar = document.getElementById('progress-bar');
-    sessionStatus = document.getElementById('session-status');
+    function pauseTimer() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            sessionStatus.textContent = 'Session paused.';
+            pauseBtn.innerHTML = '<i class="fas fa-play mr-2"></i>Resume';
+        } else {
+            sessionStatus.textContent = 'Session in progress...';
+            pauseBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>Pause';
+        }
+    }
 
-    startBtn = document.getElementById('start-timer-btn');
-    pauseBtn = document.getElementById('pause-timer-btn');
-    stopBtn = document.getElementById('stop-timer-btn');
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timeElapsed = 0;
+        isPaused = false;
+        sessionDuration = 0; // Reset duration
+        updateTimerDisplay();
+        sessionStatus.textContent = 'Ready to begin your practice';
+        startBtn.classList.remove('hidden');
+        pauseBtn.classList.add('hidden');
+        stopBtn.classList.add('hidden');
+        progressBar.style.width = '0%';
+    }
 
-    // Attach event listeners to timer controls
-    startBtn?.addEventListener('click', startTimer);
-    pauseBtn?.addEventListener('click', pauseTimer);
-    stopBtn?.addEventListener('click', stopTimer);
+    function setQuickSession(durationMinutes) {
+        sessionDuration = durationMinutes * 60;
+        timeElapsed = 0;
+        updateTimerDisplay();
+        sessionStatus.textContent = `Quick session set for ${durationMinutes} minutes.`;
+        startBtn.classList.remove('hidden');
+        pauseBtn.classList.add('hidden');
+        stopBtn.classList.add('hidden');
+        progressBar.style.width = '0%';
+    }
 
-    // Attach event listener to Show Yoga Video Library button
-    const showVideosBtn = document.getElementById('show-videos-btn');
-    showVideosBtn?.addEventListener('click', toggleYogaVideos);
+    function startGuidedSession(type, name, durationMinutes) {
+        setQuickSession(durationMinutes); // Use quick session setter
+        sessionStatus.textContent = `Starting guided ${type} session: ${name} (${durationMinutes} minutes)`;
+        startTimer(); // Automatically start the timer
+        alert(`Starting guided ${type} session: ${name} for ${durationMinutes} minutes.`);
+    }
 
-    // Attach event listeners to quick session buttons
-    document.querySelectorAll('.quick-session-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const duration = parseInt(this.dataset.duration);
-            setQuickSession(duration);
+    function toggleYogaVideos() {
+        const section = document.getElementById('yoga-videos-section');
+        const btn = document.getElementById('show-videos-btn');
+        if (!section || !btn) return;
+        if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            btn.innerHTML = '<i class="fas fa-video mr-2"></i>Yoga Video Library';
+            btn.setAttribute('aria-expanded', 'true');
+        } else {
+            section.classList.add('hidden');
+            btn.innerHTML = '<i class="fas fa-video mr-2"></i>Yoga Video Library';
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        timerDisplay = document.getElementById('timer-display');
+        progressBar = document.getElementById('progress-bar');
+        sessionStatus = document.getElementById('session-status');
+
+        startBtn = document.getElementById('start-timer-btn');
+        pauseBtn = document.getElementById('pause-timer-btn');
+        stopBtn = document.getElementById('stop-timer-btn');
+
+        // Attach event listeners to timer controls
+        startBtn?.addEventListener('click', startTimer);
+        pauseBtn?.addEventListener('click', pauseTimer);
+        stopBtn?.addEventListener('click', stopTimer);
+
+        // Attach event listener to Show Yoga Video Library button
+        const showVideosBtn = document.getElementById('show-videos-btn');
+        showVideosBtn?.addEventListener('click', toggleYogaVideos);
+
+        // Attach event listeners to quick session buttons
+        document.querySelectorAll('.quick-session-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const duration = parseInt(this.dataset.duration);
+                setQuickSession(duration);
+            });
+        });
+
+        // Attach event listeners to guided yoga session cards
+        document.querySelectorAll('.start-guided-session-card').forEach(card => {
+            card.addEventListener('click', function () {
+                const type = this.dataset.sessionType;
+                const name = this.dataset.sessionName;
+                const duration = parseInt(this.dataset.sessionDuration);
+                startGuidedSession(type, name, duration);
+            });
         });
     });
-
-    // Attach event listeners to guided yoga session cards
-    document.querySelectorAll('.start-guided-session-card').forEach(card => {
-        card.addEventListener('click', function () {
-            const type = this.dataset.sessionType;
-            const name = this.dataset.sessionName;
-            const duration = parseInt(this.dataset.sessionDuration);
-            startGuidedSession(type, name, duration);
-        });
-    });
-});
+})();
