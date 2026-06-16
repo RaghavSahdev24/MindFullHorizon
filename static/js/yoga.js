@@ -124,7 +124,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function init() {
         timerDisplay = document.getElementById('timer-display');
         progressBar = document.getElementById('progress-bar');
         sessionStatus = document.getElementById('session-status');
@@ -159,5 +159,11 @@
                 startGuidedSession(type, name, duration);
             });
         });
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
