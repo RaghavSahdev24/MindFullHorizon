@@ -357,5 +357,6 @@
     <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/breathing.js') }}"></script>
     <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/assessment-fixes.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

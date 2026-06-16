@@ -433,6 +433,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script nonce="{ g.csp_nonce }" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce="{{ g.csp_nonce }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/inline_extracted/wellness_report_inline_1.js') }}"></script>
 {% endblock %}

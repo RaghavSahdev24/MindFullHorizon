@@ -73,7 +73,7 @@
     <div class="flex justify-center mb-8">
         <button id="show-videos-btn"
             class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded shadow"
-            onclick="toggleYogaVideos()" aria-expanded="false" aria-controls="yoga-videos-section">
+            aria-expanded="false" aria-controls="yoga-videos-section">
             <i class="fas fa-video mr-2"></i>Show Yoga Video Library
         </button>
     </div>
@@ -322,6 +322,4 @@
 
 {% block scripts %}
 <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/yoga.js') }}"></script>
-<script nonce="{{ g.csp_nonce }}"
-    src="{{ url_for('static', filename='js/inline_extracted/yoga_inline_1.js') }}"></script>
 {% endblock %}

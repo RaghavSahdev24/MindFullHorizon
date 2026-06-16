@@ -377,8 +377,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script nonce="{ g.csp_nonce }" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script nonce="{{ g.csp_nonce }}" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/inline_extracted/patient_dashboard_inline_1.js') }}"></script>
-    </div>
-</div>
 {% endblock %}

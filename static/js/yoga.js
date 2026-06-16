@@ -110,11 +110,30 @@ function startGuidedSession(type, name, durationMinutes) {
     alert(`Starting guided ${type} session: ${name} for ${durationMinutes} minutes.`);
 }
 
+function toggleYogaVideos() {
+    const section = document.getElementById('yoga-videos-section');
+    const btn = document.getElementById('show-videos-btn');
+    if (!section || !btn) return;
+    if (section.classList.contains('hidden')) {
+        section.classList.remove('hidden');
+        btn.innerHTML = '<i class="fas fa-video mr-2"></i>Hide Yoga Video Library';
+        btn.setAttribute('aria-expanded', 'true');
+    } else {
+        section.classList.add('hidden');
+        btn.innerHTML = '<i class="fas fa-video mr-2"></i>Show Yoga Video Library';
+        btn.setAttribute('aria-expanded', 'false');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Attach event listeners to timer controls
     startBtn?.addEventListener('click', startTimer);
     pauseBtn?.addEventListener('click', pauseTimer);
     stopBtn?.addEventListener('click', stopTimer);
+
+    // Attach event listener to Show Yoga Video Library button
+    const showVideosBtn = document.getElementById('show-videos-btn');
+    showVideosBtn?.addEventListener('click', toggleYogaVideos);
 
     // Attach event listeners to quick session buttons
     document.querySelectorAll('.quick-session-btn').forEach(button => {
