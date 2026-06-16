@@ -1470,8 +1470,13 @@ def utility_processor():
     def get_severity_info(assessment_type, score):
         if score is None:
             return {'severity': 'N/A', 'color': 'gray'}
-        score = float(score)
-        if assessment_type == 'GAD-7':
+        try:
+            score = float(score)
+        except (ValueError, TypeError):
+            return {'severity': 'N/A', 'color': 'gray'}
+        
+        atype = str(assessment_type).upper().strip() if assessment_type else ''
+        if atype == 'GAD-7':
             if score <= 4:
                 return {'severity': 'Minimal', 'color': 'green'}
             elif score <= 9:
@@ -1480,7 +1485,7 @@ def utility_processor():
                 return {'severity': 'Moderate', 'color': 'orange'}
             else:
                 return {'severity': 'Severe', 'color': 'red'}
-        elif assessment_type == 'PHQ-9':
+        elif atype == 'PHQ-9':
             if score <= 4:
                 return {'severity': 'Minimal', 'color': 'green'}
             elif score <= 9:
@@ -1489,7 +1494,7 @@ def utility_processor():
                 return {'severity': 'Moderate', 'color': 'orange'}
             else:
                 return {'severity': 'Severe', 'color': 'red'}
-        elif assessment_type == 'Daily Mood':
+        elif atype == 'DAILY MOOD':
             if score >= 4:
                 return {'severity': 'Positive', 'color': 'green'}
             elif score >= 3:

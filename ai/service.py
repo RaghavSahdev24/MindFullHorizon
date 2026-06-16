@@ -69,7 +69,14 @@ async def ask_with_severity(user_text: str, user_id=None, prefer_llm=True):
 
     if parsed:
         reply_text = parsed.get('reply','I hear you. Can you say more?')
-        llm_sev = int(parsed.get('severity', score))
+        try:
+            llm_val = parsed.get('severity')
+            if llm_val is not None and str(llm_val).lower().strip() not in ['n/a', 'na', 'none', 'null', '']:
+                llm_sev = int(float(llm_val))
+            else:
+                llm_sev = score
+        except (ValueError, TypeError):
+            llm_sev = score
         score = max(score, min(10, llm_sev))
         recommended_action = parsed.get('recommended_action','none')
         reason = parsed.get('reason','')

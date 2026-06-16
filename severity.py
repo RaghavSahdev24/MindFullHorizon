@@ -6,10 +6,10 @@ SEVERE_KEYWORDS = [
 ]
 HIGH_RISK_KEYWORDS = ['plan', 'intent', 'means', 'have a gun', 'poison', 'access to']
 
-def heuristic_severity(text: str) -> int:
+def heuristic_severity(text) -> int:
     if not text:
         return 0
-    t = text.lower()
+    t = str(text).lower()
     score = 0
     for kw in SEVERE_KEYWORDS:
         if kw in t:
