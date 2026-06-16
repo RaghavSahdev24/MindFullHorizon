@@ -395,15 +395,15 @@ def progress():
             logger.error(f"Error fetching goals or assessments: {str(e)}", exc_info=True)
             return "An error occurred while fetching your data. Please try again later.", 500
         
-        latest_gad7 = next((a for a in assessments if a.assessment_type == 'GAD-7'), None)
-        latest_phq9 = next((a for a in assessments if a.assessment_type == 'PHQ-9'), None)
-        latest_mood = next((a for a in assessments if a.assessment_type == 'Daily Mood'), None)
+        latest_gad7 = next((a for a in assessments if a.assessment_type and 'GAD-7' in a.assessment_type.upper()), None)
+        latest_phq9 = next((a for a in assessments if a.assessment_type and 'PHQ-9' in a.assessment_type.upper()), None)
+        latest_mood = next((a for a in assessments if a.assessment_type and ('DAILY MOOD' in a.assessment_type.upper() or 'MOOD' in a.assessment_type.upper())), None)
 
-        mood_assessments = sorted([a for a in assessments if a.assessment_type == 'Daily Mood'], key=lambda x: x.created_at)[-30:]
+        mood_assessments = sorted([a for a in assessments if a.assessment_type and ('DAILY MOOD' in a.assessment_type.upper() or 'MOOD' in a.assessment_type.upper())], key=lambda x: x.created_at)[-30:]
         mood_data = [{'date': m.created_at.strftime('%Y-%m-%d'), 'score': m.score} for m in mood_assessments]
         
-        gad7_assessments = sorted([a for a in assessments if a.assessment_type == 'GAD-7'], key=lambda x: x.created_at)
-        phq9_assessments = sorted([a for a in assessments if a.assessment_type == 'PHQ-9'], key=lambda x: x.created_at)
+        gad7_assessments = sorted([a for a in assessments if a.assessment_type and 'GAD-7' in a.assessment_type.upper()], key=lambda x: x.created_at)
+        phq9_assessments = sorted([a for a in assessments if a.assessment_type and 'PHQ-9' in a.assessment_type.upper()], key=lambda x: x.created_at)
 
         assessment_chart_labels = sorted(list(set([a.created_at.strftime('%Y-%m-%d') for a in gad7_assessments + phq9_assessments])))
         assessment_chart_gad7_data = [next((a.score for a in gad7_assessments if a.created_at.strftime('%Y-%m-%d') == date), None) for date in assessment_chart_labels]

@@ -590,13 +590,14 @@ def get_institutional_summary(institution, db, days_active=7, days_risk=7, days_
     for assessment in recent_assessments:
         # Assuming a simple mapping for GAD-7/PHQ-9 to a 1-10 wellness scale
         # This is a simplified example; a more robust calculation might be needed
-        if assessment.assessment_type in ['GAD-7', 'PHQ-9'] and assessment.score is not None:
+        atype = assessment.assessment_type.upper() if assessment.assessment_type else ''
+        if ('GAD-7' in atype or 'PHQ-9' in atype) and assessment.score is not None:
             # Invert score: lower assessment score = higher wellness
-            max_score = 21 if assessment.assessment_type == 'GAD-7' else 27
+            max_score = 21 if 'GAD-7' in atype else 27
             wellness_contribution = (1 - (assessment.score / max_score)) * 10 # Scale to 0-10
             total_wellness_score += wellness_contribution
             scored_assessments_count += 1
-        elif assessment.assessment_type == 'Daily Mood' and assessment.score is not None:
+        elif ('DAILY MOOD' in atype or 'MOOD' in atype) and assessment.score is not None:
             total_wellness_score += assessment.score * 2 # Scale mood (1-5) to 1-10
             scored_assessments_count += 1
 

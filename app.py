@@ -490,9 +490,10 @@ def wellness_report(user_id):
 
         # Update the appropriate data array
         idx = mh_chart_labels.index(date_str)
-        if assessment.assessment_type == 'GAD-7':
+        atype = assessment.assessment_type.upper() if assessment.assessment_type else ''
+        if 'GAD-7' in atype:
             gad7_data[idx] = assessment.score
-        elif assessment.assessment_type == 'PHQ-9':
+        elif 'PHQ-9' in atype:
             phq9_data[idx] = assessment.score
 
     # Filter out dates where both GAD-7 and PHQ-9 are None using list comprehensions
@@ -1470,13 +1471,9 @@ def utility_processor():
     def get_severity_info(assessment_type, score):
         if score is None:
             return {'severity': 'N/A', 'color': 'gray'}
-        try:
-            score = float(score)
-        except (ValueError, TypeError):
-            return {'severity': 'N/A', 'color': 'gray'}
-        
+        score = float(score)
         atype = str(assessment_type).upper().strip() if assessment_type else ''
-        if atype == 'GAD-7':
+        if 'GAD-7' in atype:
             if score <= 4:
                 return {'severity': 'Minimal', 'color': 'green'}
             elif score <= 9:
@@ -1485,7 +1482,7 @@ def utility_processor():
                 return {'severity': 'Moderate', 'color': 'orange'}
             else:
                 return {'severity': 'Severe', 'color': 'red'}
-        elif atype == 'PHQ-9':
+        elif 'PHQ-9' in atype:
             if score <= 4:
                 return {'severity': 'Minimal', 'color': 'green'}
             elif score <= 9:
@@ -1494,7 +1491,7 @@ def utility_processor():
                 return {'severity': 'Moderate', 'color': 'orange'}
             else:
                 return {'severity': 'Severe', 'color': 'red'}
-        elif atype == 'DAILY MOOD':
+        elif 'DAILY MOOD' in atype or 'MOOD' in atype:
             if score >= 4:
                 return {'severity': 'Positive', 'color': 'green'}
             elif score >= 3:

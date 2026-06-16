@@ -499,9 +499,10 @@ def wellness_report(user_id):
             phq9_data.append(None) # Initialize with None
 
         idx = mh_chart_labels.index(date_str)
-        if assessment.assessment_type == 'GAD-7':
+        atype = assessment.assessment_type.upper() if assessment.assessment_type else ''
+        if 'GAD-7' in atype:
             gad7_data[idx] = assessment.score
-        elif assessment.assessment_type == 'PHQ-9':
+        elif 'PHQ-9' in atype:
             phq9_data[idx] = assessment.score
 
     # Filter out dates where both GAD-7 and PHQ-9 are None

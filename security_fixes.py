@@ -275,11 +275,12 @@ def atomic_wellness_score_update(user_id, module_id):
                     weight = max(1, 30 - days_old)  # More recent = higher weight
                     
                     # Convert assessment score to wellness scale (0-10)
-                    if assessment.assessment_type == 'GAD-7':
+                    atype = assessment.assessment_type.upper() if assessment.assessment_type else ''
+                    if 'GAD-7' in atype:
                         wellness_contribution = (1 - (assessment.score / 21)) * 10
-                    elif assessment.assessment_type == 'PHQ-9':
+                    elif 'PHQ-9' in atype:
                         wellness_contribution = (1 - (assessment.score / 27)) * 10
-                    elif assessment.assessment_type == 'Daily Mood':
+                    elif 'DAILY MOOD' in atype or 'MOOD' in atype:
                         wellness_contribution = assessment.score * 2  # Scale 1-5 to 2-10
                     else:
                         continue
