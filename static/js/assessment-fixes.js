@@ -179,11 +179,17 @@ function openAssessmentModal(options) {
         input.name = 'assessment-answer';
         input.value = index;
         input.className = 'mr-3';
-        if ((window.assessmentAnswers.standard[qIndex] || null) === index) {
+        if (window.assessmentAnswers.standard[qIndex] === index) {
           input.checked = true;
         }
         input.addEventListener('change', () => {
           selectAnswer(index);
+        });
+        label.addEventListener('click', (e) => {
+          if (e.target !== input) {
+            input.checked = true;
+            selectAnswer(index);
+          }
         });
         const span = document.createElement('span');
         span.className = 'text-gray-700';
@@ -206,6 +212,12 @@ function openAssessmentModal(options) {
         }
         input.addEventListener('change', () => {
           selectAnswer(opt, true);
+        });
+        label.addEventListener('click', (e) => {
+          if (e.target !== input) {
+            input.checked = !input.checked;
+            selectAnswer(opt, true);
+          }
         });
         const span = document.createElement('span');
         span.className = 'text-gray-700';
