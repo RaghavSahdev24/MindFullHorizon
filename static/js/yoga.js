@@ -3,13 +3,13 @@ let sessionDuration = 0; // in seconds
 let timeElapsed = 0;
 let isPaused = false;
 
-const timerDisplay = document.getElementById('timer-display');
-const progressBar = document.getElementById('progress-bar');
-const sessionStatus = document.getElementById('session-status');
+let timerDisplay;
+let progressBar;
+let sessionStatus;
 
-const startBtn = document.getElementById('start-timer-btn');
-const pauseBtn = document.getElementById('pause-timer-btn');
-const stopBtn = document.getElementById('stop-timer-btn');
+let startBtn;
+let pauseBtn;
+let stopBtn;
 
 function updateTimerDisplay() {
     const minutes = Math.floor(timeElapsed / 60);
@@ -126,6 +126,14 @@ function toggleYogaVideos() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    timerDisplay = document.getElementById('timer-display');
+    progressBar = document.getElementById('progress-bar');
+    sessionStatus = document.getElementById('session-status');
+
+    startBtn = document.getElementById('start-timer-btn');
+    pauseBtn = document.getElementById('pause-timer-btn');
+    stopBtn = document.getElementById('stop-timer-btn');
+
     // Attach event listeners to timer controls
     startBtn?.addEventListener('click', startTimer);
     pauseBtn?.addEventListener('click', pauseTimer);
