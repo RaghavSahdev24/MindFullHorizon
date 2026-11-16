@@ -1,0 +1,70 @@
+{
+  "name": "MindFull Horizon",
+  "buildCommand": "pip install -r requirements.txt && python init_db.py",
+  "startCommand": "gunicorn --worker-class eventlet --workers 1 --bind 0.0.0.0:$PORT app:app",
+  "environments": [
+    {
+      "name": "production",
+      "environmentVariables": {
+        "FLASK_ENV": "production",
+        "PYTHONPATH": ".",
+        "SECRET_KEY": "${{ secrets.SECRET_KEY }}",
+        "GEMINI_API_KEY": "${{ secrets.GEMINI_API_KEY }}",
+        "GOOGLE_OAUTH_CLIENT_ID": "${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}",
+        "DISABLE_LOCAL_AI": "true"
+      }
+    }
+  ],
+  "services": [
+    {
+      "type": "web",
+      "name": "mindful-horizon",
+      "env": "python",
+      "plan": "free",
+      "buildCommand": "pip install -r requirements.txt && python init_db.py",
+      "startCommand": "gunicorn app:app",
+      "envVars": [
+        {
+          "key": "FLASK_APP",
+          "value": "app.py"
+        },
+        {
+          "key": "FLASK_ENV",
+          "value": "production"
+        },
+        {
+          "key": "SECRET_KEY",
+          "generateValue": true
+        },
+        {
+          "key": "DISABLE_LOCAL_AI",
+          "value": "true"
+        },
+        {
+          "key": "GOOGLE_OAUTH_CLIENT_ID",
+          "sync": false
+        },
+        {
+          "key": "GOOGLE_OAUTH_CLIENT_SECRET",
+          "sync": false
+        },
+        {
+          "key": "DATABASE_URL",
+          "fromDatabase": {
+            "name": "mindfullhorizon-db",
+            "property": "connectionString"
+          }
+        }
+      ]
+    },
+    {
+      "type": "psql",
+      "name": "mindfullhorizon-db",
+      "plan": "free"
+    }
+  ],
+  "buildFilter": {
+    "ignoredPaths": ["/.git", "/.github", "/docs", "/tests", "/*.md", "/.ebextensions", "/docker-compose.yml", "/nginx.conf", "/Procfile.alternatives"]
+  }
+}

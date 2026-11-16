@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+
+{% block title %}Wellness Report - {{ patient.name }} - Mindful Horizon{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Wellness Report</h1>
+                <p class="text-lg text-gray-600">Comprehensive analysis for {{ patient.name }}</p>
+                <p class="text-sm text-gray-500 mt-1">{{ patient.email }} • {{ patient.institution }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-500">Report Generated</p>
+                <p class="text-lg font-semibold text-gray-800">{{ datetime.now().strftime('%B %d, %Y') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Overview Cards -->
+    <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
+        <div class="card border border-gray-200 rounded-lg p-6 shadow-sm bg-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Overall Score</p>
+                    {% set overall_score = ai_analysis.score if ai_analysis else 'No data' %}
+                    {% if overall_score == 'Excellent' %}
+                        <p class="text-2xl font-bold text-green-600">{{ overall_score }}</p>
+                    {% elif overall_score == 'Good' %}
+                        <p class="text-2xl font-bold text-yellow-600">{{ overall_score }}</p>
+                    {% elif overall_score == 'Needs Improvement' %}
+                        <p class="text-2xl font-bold text-red-600">{{ overall_score }}</p>
+                    {% else %}
+                        <p class="text-2xl font-bold text-gray-500">{{ overall_score }}</p>
+                    {% endif %}
+                </div>
+                <div class="p-3 bg-purple-500 rounded-full">
+                    <i class="fas fa-brain text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border border-gray-200 rounded-lg p-6 shadow-sm bg-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Points</p>
+                    <p class="text-2xl font-bold text-blue-600">{{ gamification.points if gamification else 0 }}</p>
+                </div>
+                <div class="p-3 bg-blue-500 rounded-full">
+                    <i class="fas fa-trophy text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border border-gray-200 rounded-lg p-6 shadow-sm bg-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Current Streak</p>
+                    <p class="text-2xl font-bold text-green-600">{{ gamification.streak if gamification else 0 }} days</p>
+                </div>
+                <div class="p-3 bg-green-500 rounded-full">
+                    <i class="fas fa-calendar-check text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border border-gray-200 rounded-lg p-6 shadow-sm bg-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Data Points</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ wellness_trend.digital_detox|length + wellness_trend.assessments|length }}</p>
+                </div>
+                <div class="p-3 bg-indigo-500 rounded-full">
+                    <i class="fas fa-chart-bar text-white text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AI Analysis Section -->
+    <div class="card border border-gray-200 rounded-lg p-6 mb-8 shadow-sm bg-white">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-robot text-green-500 mr-3"></i>AI-Powered Analysis
+            <span class="status-indicator status-online ml-2" title="AI Analysis Complete"></span>
+        </h3>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-microscope text-blue-500 mr-2"></i>Detailed Analysis
+                </h4>
+                <p class="text-gray-700 leading-relaxed">{{ ai_analysis.detailed_analysis if ai_analysis else 'No AI analysis available yet. Patient needs to log more data for comprehensive analysis.' }}</p>
+            </div>
+
+            <div class="bg-gradient-to-r from-green-50 to-yellow-50 p-6 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Key Recommendations
+                </h4>
+                {% if ai_analysis and ai_analysis.action_items %}
+                    <ul class="space-y-2">
+                        {% for action in ai_analysis.action_items %}
+                        <li class="text-gray-700 flex items-start">
+                            <i class="fas fa-arrow-right text-green-500 mr-2 mt-1.5 text-xs"></i>{{ action }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-600">No specific recommendations available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-6 p-4 rounded-lg border-l-4 border-blue-400 bg-blue-50">
+            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-comment-medical text-blue-500 mr-2"></i>Clinical Suggestion
+            </h4>
+            <p class="text-gray-700">{{ ai_analysis.suggestion if ai_analysis else 'Continue monitoring and encourage regular data logging for better insights.' }}</p>
+        </div>
+    </div>
+
+    <!-- Mood Trends -->
+    <div class="card p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-smile text-blue-500 mr-3"></i>Mood Trends (90 Days)
+        </h3>
+        {% if mood_chart_data %}
+        <div class="chart-container mb-4">
+            <canvas id="mood-trends-chart"></canvas>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-frown text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-500">No mood data available.</p>
+            <p class="text-sm text-gray-400 mt-2">Patient has not logged any mood data yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Mental Health Assessment Trends -->
+    <div class="card p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-notes-medical text-green-500 mr-3"></i>Mental Health Assessment Trends
+        </h3>
+        {% if mh_chart_labels %}
+        <div class="chart-container mb-4">
+            <canvas id="mh-assessment-trends-chart"></canvas>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-clipboard-list text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-500">No mental health assessment data available.</p>
+            <p class="text-sm text-gray-400 mt-2">Patient has not completed enough mental health assessments for charting.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Digital Wellness Trends -->
+    <div class="card p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-chart-line text-purple-500 mr-3"></i>Digital Wellness Trends (90 Days)
+        </h3>
+        
+        {% if wellness_trend.digital_detox %}
+        <div class="chart-container mb-4">
+            <canvas id="wellness-trends-chart"></canvas>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-4 mt-6">
+            {% set latest_log = wellness_trend.digital_detox[0] %}
+            <div class="bg-red-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-gray-600 mb-1">Latest Screen Time</p>
+                <p class="text-2xl font-bold text-red-600">{{ latest_log.screen_time_hours }}h</p>
+                <p class="text-xs text-gray-500 mt-1">{{ latest_log.date }}</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-gray-600 mb-1">Academic Score</p>
+                <p class="text-2xl font-bold text-blue-600">{{ latest_log.academic_score }}%</p>
+                <p class="text-xs text-gray-500 mt-1">{{ latest_log.date }}</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg text-center">
+                <p class="text-sm text-gray-600 mb-1">Social Level</p>
+                <p class="text-2xl font-bold text-green-600">{{ latest_log.social_interactions.title() }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ latest_log.date }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-chart-line text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-500">No digital wellness data available.</p>
+            <p class="text-sm text-gray-400 mt-2">Patient has not started logging digital wellness data yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Assessment History -->
+    <div class="card p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-clipboard-list text-indigo-500 mr-3"></i>Assessment History
+        </h3>
+        
+        {% if wellness_trend.assessments %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assessment Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AI Analysis</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for assessment in wellness_trend.assessments %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ assessment.created_at }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ assessment.assessment_type }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ assessment.score }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% set severity_info = get_severity_info(assessment.assessment_type, assessment.score) %}
+                            {% if severity_info.color == 'green' %}
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ severity_info.severity }}</span>
+                            {% elif severity_info.color == 'yellow' %}
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ severity_info.severity }}</span>
+                            {% elif severity_info.color == 'orange' %}
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">{{ severity_info.severity }}</span>
+                            {% elif severity_info.color == 'red' %}
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">{{ severity_info.severity }}</span>
+                            {% else %}
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ severity_info.severity }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            {% if assessment.ai_analysis %}
+                                <div class="max-w-xs">
+                                    <p class="truncate">{{ assessment.ai_analysis }}</p>
+                                </div>
+                            {% else %}
+                                <span class="text-gray-400">No AI analysis</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-clipboard-list text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-500">No assessment data available.</p>
+            <p class="text-sm text-gray-400 mt-2">Patient has not completed any mental health assessments yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Clinical Sessions -->
+    <div class="card p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-user-md text-teal-500 mr-3"></i>Recent Clinical Sessions
+        </h3>
+        
+        {% if recent_sessions %}
+        <div class="space-y-4">
+            {% for session in recent_sessions %}
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-semibold text-gray-800">Session on {{ session.session_date.strftime('%b %d, %Y at %I:%M %p') }}</h4>
+                </div>
+                {% if session.ai_generated_note %}
+                <div class="bg-gray-50 p-3 rounded text-sm text-gray-700 mb-2">
+                    <p class="font-medium mb-1">AI-Generated Summary:</p>
+                    <p>{{ session.ai_generated_note }}</p>
+                </div>
+                {% endif %}
+                {% if session.provider_notes %}
+                <div class="bg-blue-50 p-3 rounded text-sm text-gray-700">
+                    <p class="font-medium mb-1">Provider Notes:</p>
+                    <p>{{ session.provider_notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-user-md text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-500">No clinical sessions recorded.</p>
+            <p class="text-sm text-gray-400 mt-2">Patient has not had any documented clinical sessions yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Gamification Status -->
+    {% if gamification %}
+    <div class="card p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-gamepad text-pink-500 mr-3"></i>Engagement & Gamification
+        </h3>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-4">Achievement Status</h4>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Points</span>
+                        <span class="font-semibold text-purple-600">{{ gamification.points }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Current Streak</span>
+                        <span class="font-semibold text-green-600">{{ gamification.streak }} days</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Last Activity</span>
+                        <span class="font-semibold text-gray-600">{{ gamification.last_activity.strftime('%b %d, %Y') if gamification.last_activity else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-4">Earned Badges</h4>
+                {% if gamification.badges %}
+                <div class="flex flex-wrap gap-2">
+                    {% for badge in gamification.badges %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                        <i class="fas fa-medal mr-1"></i>{{ badge }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-500">No badges earned yet.</p>
+                <p class="text-sm text-gray-400 mt-2">Continue logging data to earn achievement badges!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="mt-8 flex justify-between items-center">
+        <div class="flex space-x-4">
+            <button onclick="window.print()" class="btn-primary" aria-label="Print this wellness report">
+                <i class="fas fa-print mr-2"></i>Print Report
+            </button>
+            <button onclick="exportReport()" class="btn-primary" aria-label="Export report data to CSV">
+                <i class="fas fa-download mr-2"></i>Export Data
+            </button>
+            <a href="{{ url_for('telehealth_session', user_id=patient.id) }}" class="btn-primary bg-purple-600 hover:bg-purple-700" aria-label="Start a telehealth video call with the patient">
+                <i class="fas fa-video mr-2"></i>Start Telehealth Call
+            </a>
+        </div>
+        <div class="mt-12 text-center">
+            {{ back_to_dashboard_button() }}
+        </div>
+    </div>
+
+    <!-- AI Goal Suggestions -->
+    <div class="card p-6 mt-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>AI Goal Suggestions
+        </h3>
+        {% if ai_goal_suggestions and ai_goal_suggestions.suggestions %}
+        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+            {% for suggestion in ai_goal_suggestions.suggestions %}
+            <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-600">No AI goal suggestions available at this time.</p>
+        {% endif %}
+    </div>
+
+    <!-- AI Medication Adherence Insights -->
+    <div class="card p-6 mt-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-pills text-teal-500 mr-3"></i>AI Medication Adherence Insights
+        </h3>
+        {% if ai_medication_adherence_insights and ai_medication_adherence_insights.summary %}
+        <p class="text-gray-700 mb-4">{{ ai_medication_adherence_insights.summary }}</p>
+        {% if ai_medication_adherence_insights.recommendations %}
+        <h4 class="font-semibold text-gray-800 mb-2">Recommendations:</h4>
+        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+            {% for recommendation in ai_medication_adherence_insights.recommendations %}
+            <li>{{ recommendation }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% else %}
+        <p class="text-gray-600">No AI medication adherence insights available at this time.</p>
+        {% endif %}
+    </div>
+
+    <!-- Send Prescription Section -->
+    <div class="card p-6 mt-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-prescription-bottle-alt text-blue-500 mr-3"></i>Send Prescription
+        </h3>
+        <form action="{{ url_for('send_prescription', patient_id=patient.id) }}" method="POST" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div>
+                <label for="medication_name" class="block text-sm font-medium text-gray-700">Medication Name</label>
+                <input type="text" name="medication_name" id="medication_name" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="dosage" class="block text-sm font-medium text-gray-700">Dosage</label>
+                <input type="text" name="dosage" id="dosage" required
+                       class="mt-1 block w-full rounded-md border-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="instructions" class="block text-sm font-medium text-gray-700">Instructions</label>
+                <textarea name="instructions" id="instructions" rows="3"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"></textarea>
+            </div>
+            <div>
+                <label for="expiry_date" class="block text-sm font-medium text-gray-700">Expiry Date (Optional)</label>
+                <input type="date" name="expiry_date" id="expiry_date"
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+            <button type="submit" class="btn-primary bg-blue-600 hover:bg-blue-700" aria-label="Send prescription to the patient">
+                <i class="fas fa-paper-plane mr-2"></i>Send Prescription
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script nonce="{{ g.csp_nonce }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/inline_extracted/wellness_report_inline_1.js') }}"></script>
+{% endblock %}

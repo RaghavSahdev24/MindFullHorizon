@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width:900px; margin:40px auto; text-align:center;">
+  <h1 style="color:#2563eb; font-size:2rem;">Mood Music — Binaural Beats</h1>
+  <p style="color:#475569;">Choose a mood and we'll play matching binaural-beats audio from the local dataset in the page. Use headphones for the best effect.</p>
+
+  <div id="music-buttons" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:20px;">
+    <button class="mood-btn" data-mood="happy">Happy</button>
+    <button class="mood-btn" data-mood="sad">Sad</button>
+    <button class="mood-btn" data-mood="angry">Angry</button>
+    <button class="mood-btn" data-mood="calm">Calm</button>
+    <button class="mood-btn" data-mood="anxious">Anxious</button>
+    <button class="mood-btn" data-mood="focus">Focus</button>
+  </div>
+
+  <p id="music-note" style="color:#64748b; margin-top:12px;">We'll play matching binaural beats from the local dataset if available.</p>
+
+  <div id="player-container" style="margin-top:18px; text-align:center;">
+    <div id="now-playing" style="color:#1f2937; font-weight:600; margin-bottom:8px; display:none;">Now Playing: <span id="now-playing-label"></span></div>
+    <audio id="mood-audio" controls style="width:100%; max-width:700px; display:none;"></audio>
+    <div id="player-controls" style="margin-top:8px; display:none;">
+      <button id="play-all" class="mood-btn" style="padding:6px 12px;">Play All</button>
+      <button id="next-track" class="mood-btn" style="padding:6px 12px;">Next ▶</button>
+      <button id="clear-playlist" class="mood-btn" style="padding:6px 12px;">Clear</button>
+    </div>
+  </div>
+
+  <div id="playlist-container" style="margin-top:20px; text-align:left; display:none;">
+    <h3 style="color:#2563eb; font-size:1.2rem; margin-bottom:10px;">Select a track</h3>
+
+    <div id="filters" style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:10px;">
+      <div>
+        <label for="filter-type" style="font-size:0.9rem; color:#475569;">Type</label><br />
+        <select id="filter-type" style="padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;">
+          <option value="all" selected>All</option>
+          <option value="solfeggio">Solfeggio (Long)</option>
+          <option value="isochronic">Isochronic</option>
+          <option value="pure">Pure</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-brainwave" style="font-size:0.9rem; color:#475569;">Brainwave</label><br />
+        <select id="filter-brainwave" style="padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;">
+          <option value="all" selected>All</option>
+          <option value="alpha">Alpha (8-12 Hz)</option>
+          <option value="beta">Beta (12-30 Hz)</option>
+          <option value="delta">Delta (0.5-4 Hz)</option>
+          <option value="gamma">Gamma (30+ Hz)</option>
+          <option value="theta">Theta (4-8 Hz)</option>
+        </select>
+      </div>
+      <div>
+        <label for="sort-by" style="font-size:0.9rem; color:#475569;">Sort By</label><br />
+        <select id="sort-by" style="padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;">
+          <option value="default" selected>Relevance</option>
+          <option value="frequency_asc">Frequency (Low to High)</option>
+          <option value="frequency_desc">Frequency (High to Low)</option>
+          <option value="duration">Duration (Long First)</option>
+          <option value="brainwave">Brainwave Type</option>
+        </select>
+      </div>
+      <div style="min-width:140px;">
+        <label for="min-freq" style="font-size:0.9rem; color:#475569;">Min Freq (Hz)</label><br />
+        <input id="min-freq" type="number" placeholder="0.5" min="0.5" max="100" step="0.5" style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;" />
+      </div>
+      <div style="min-width:140px;">
+        <label for="max-freq" style="font-size:0.9rem; color:#475569;">Max Freq (Hz)</label><br />
+        <input id="max-freq" type="number" placeholder="100" min="0.5" max="100" step="0.5" style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;" />
+      </div>
+      <div style="flex:1; min-width:220px;">
+        <label for="search-text" style="font-size:0.9rem; color:#475569;">Search</label><br />
+        <input id="search-text" type="text" placeholder="Search label or filename..." style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:8px;" />
+      </div>
+      <div style="margin-top:20px;">
+        <button id="reset-filters" style="padding:6px 12px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; color:#475569; cursor:pointer;">Reset Filters</button>
+      </div>
+    </div>
+
+    <div id="playlist" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:10px;"></div>
+  </div>
+</div>
+
+<script nonce="{{ g.csp_nonce }}" src="{{ url_for('static', filename='js/inline_extracted/music_inline_1.js') }}"></script>
+
+{% endblock %}

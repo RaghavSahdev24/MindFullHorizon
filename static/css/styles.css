@@ -1,0 +1,102 @@
+body.modal-open {
+  overflow: hidden;
+  height: 100%;
+}
+#assessmentModal.visible {
+  /* ensure it sits centered and above all content */
+  display: flex !important;
+  visibility: visible;
+  opacity: 1;
+}
+#assessmentModal.hidden {
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+}
+/* ===== Fix: navbar focus & google translate layout ===== */
+.advanced-nav .nav-link-item:focus,
+.advanced-nav .nav-link-item:active,
+.advanced-nav .user-menu-btn:focus,
+.advanced-nav .user-menu-btn:active,
+.advanced-nav .nav-link-item:focus-visible {
+  background-color: transparent !important; /* stop focus / active from turning white */
+  color: inherit !important;
+  outline: 2px solid rgba(99,102,241,0.12) !important; /* tasteful focus ring for accessibility */
+  box-shadow: none !important;
+}
+
+/* Wrapper for google translate to avoid layout shifts */
+.google-translate-wrapper {
+  display: inline-block;
+  width: 180px;                 /* fixed width to avoid pushing nav items */
+  min-width: 120px;
+  max-width: 220px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+/* Prevent the invisible google banner frame from moving content */
+.goog-te-banner-frame.skiptranslate { display:none !important; }
+body { top: 0 !important; }
+
+/* Make the google select appear visually consistent */
+.goog-te-gadget .goog-te-combo {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* When modal is opened, lock body scroll without causing layout jump */
+body.modal-open {
+  overflow: hidden !important;
+  height: 100%;
+}
+
+/* ===== Breathing Exercise Animations ===== */
+#breathing-circle {
+  transition: all 1s ease-in-out;
+}
+
+#breathing-circle.active {
+  transform: scale(1.5);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+#breathing-circle.inhale {
+  transform: scale(1.8);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+#breathing-circle.hold {
+  transform: scale(1.6);
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+#breathing-circle.exhale {
+  transform: scale(1.2);
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+#breathing-circle.rest {
+  transform: scale(1.0);
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+#breathing-visualizer {
+  transition: all 1s ease-in-out;
+}
+
+#breathing-visualizer.active {
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+}
+
+/* Optional: reduce translate element container margin and pin to right side on small screens */
+@media (max-width: 768px) {
+  .google-translate-wrapper { position: absolute; right: 12px; top: 12px; width: auto; }
+}
+
+/* Ensure charts are visible */
+canvas { display: block; max-width: 100%; }
+#assessment-history-chart, #mood-history-chart, #screenTimeChart, #wellnessChart {
+  min-height: 200px !important;
+  height: 250px !important;
+}
